@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 20012, Willow Garage, Inc.
+*  Copyright (c) 2012, Willow Garage, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,39 +32,45 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
+#include <string>
+
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/compressed_image.hpp>
-#include "image_transport/simple_publisher_plugin.h"
+#include <image_transport/simple_publisher_plugin.hpp>
+
+#include <rclcpp/node.hpp>
 
 namespace compressed_depth_image_transport {
 
-class CompressedDepthPublisher : public image_transport::SimplePublisherPlugin<sensor_msgs::msg::CompressedImage>
-{
-public:
-  virtual ~CompressedDepthPublisher() {}
+    class CompressedDepthPublisher : public image_transport::SimplePublisherPlugin<sensor_msgs::msg::CompressedImage>
+    {
+    public:
+        CompressedDepthPublisher(): logger_(rclcpp::get_logger("CompressedDepthPublisher")) {}
+        virtual ~CompressedDepthPublisher() {}
 
-  virtual std::string getTransportName() const
-  {
-    return "compressedDepth";
-  }
+        virtual std::string getTransportName() const
+        {
+            return "compressedDepth";
+        }
 
-protected:
-  // Overridden to set up reconfigure server
-  virtual void advertiseImpl(
-          rclcpp::Node * node,
-          const std::string &base_topic,
-          rmw_qos_profile_t custom_qos) override final;
+    protected:
+        // Overridden to set up reconfigure server
+        virtual void advertiseImpl(
+                rclcpp::Node * node,
+                const std::string &base_topic,
+                rmw_qos_profile_t custom_qos) override final;
 
-  virtual void publish(const sensor_msgs::msg::Image& message,
-                       const PublishFn& publish_fn) const override final;
+        virtual void publish(const sensor_msgs::msg::Image& message,
+                             const PublishFn& publish_fn) const override final;
 
-  struct Config {
-    int png_level;
-    double depth_max;
-    double depth_quantization;
-  };
+        struct Config {
+            int png_level;
+            double depth_max;
+            double depth_quantization;
+        };
 
-  Config config_;
-};
+        Config config_;
+        rclcpp::Logger logger_;
+    };
 
 } //namespace compressed_depth_image_transport

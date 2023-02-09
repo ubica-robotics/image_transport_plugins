@@ -68,7 +68,9 @@ void CompressedPublisher::advertiseImpl(
   uint ns_len = node->get_effective_namespace().length();
   std::string param_base_name = base_topic.substr(ns_len);
   // remove leading /
-  param_base_name.erase(0, 1);
+  
+  if (param_base_name.length > 0 && param_base_name[0]=='/')
+    param_base_name.erase(0, 1);
   std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
   std::string format_param_name = param_base_name + ".format";
   if (!node->has_parameter(format_param_name))

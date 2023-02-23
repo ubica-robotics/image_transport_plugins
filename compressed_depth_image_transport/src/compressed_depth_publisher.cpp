@@ -47,7 +47,7 @@
 
 constexpr int kDefaultPngLevel = 9;
 constexpr double kDefaultDepthMax = 10.0;
-constexpr double KDefaultDepthQuantization = 100.0;
+constexpr double kDefaultDepthQuantization = 100.0;
 
 using namespace cv;
 using namespace std;
@@ -132,6 +132,7 @@ namespace compressed_depth_image_transport
             depth_quantization_range.to_value = 150.0;
             depth_quantization_range.step = 0.01;
             depth_quantization_description.floating_point_range.push_back(depth_quantization_range);
+            config_.depth_quantization = node->declare_parameter(depth_quantization_param_name, kDefaultDepthQuantization, depth_quantization_description);
         }
         else {
             RCLCPP_WARN(logger_, "%s was previously delared", png_level_param_name.c_str());

@@ -67,10 +67,23 @@ void CompressedPublisher::advertiseImpl(
 
   uint ns_len = node->get_effective_namespace().length();
   std::string param_base_name = base_topic.substr(ns_len);
+  // remove leading /
+  
+  if (param_base_name.length() > 0 && param_base_name[0] == '/')
+    param_base_name.erase(0, 1);
+    
   std::replace(param_base_name.begin(), param_base_name.end(), '/', '.');
+  
+  std::string depth_or_color = param_base_name.substr(0, param_base_name.find("."));
+  if (depth_or_color == "depth") {
+    return;
+  }
+  
+  param_base_name += ".compressed";
   std::string format_param_name = param_base_name + ".format";
   if (!node->has_parameter(format_param_name))
   {
+    RCLCPP_WARN(logger_, "%s was not previously declared", format_param_name.c_str());
     rcl_interfaces::msg::ParameterDescriptor format_description;
     format_description.name = "format";
     format_description.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
@@ -87,6 +100,7 @@ void CompressedPublisher::advertiseImpl(
   std::string png_level_param_name = param_base_name + ".png_level";
   if (!node->has_parameter(png_level_param_name))
   {
+    RCLCPP_WARN(logger_, "%s was not previously declared", png_level_param_name.c_str());
     rcl_interfaces::msg::ParameterDescriptor png_level_description;
     png_level_description.name = "png_level";
     png_level_description.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
@@ -107,6 +121,7 @@ void CompressedPublisher::advertiseImpl(
   std::string jpeg_quality_param_name = param_base_name + ".jpeg_quality";
   if (!node->has_parameter(jpeg_quality_param_name))
   {
+    RCLCPP_WARN(logger_, "%s was not previously declared", jpeg_quality_param_name.c_str());
     rcl_interfaces::msg::ParameterDescriptor jpeg_quality_description;
     jpeg_quality_description.name = "jpeg_quality";
     jpeg_quality_description.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;

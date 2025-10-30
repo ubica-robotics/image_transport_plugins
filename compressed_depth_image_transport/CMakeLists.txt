@@ -61,4 +61,8 @@ if(BUILD_TESTING)
   target_link_libraries(rvl_codec_test ${PROJECT_NAME})
 endif()
 
+# CHANGES FROM UBICA
+# expose include dirs and library such that downstream packages can use the compression methods 
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
 ament_package()
